@@ -5,9 +5,6 @@
 class VertexBufferLayout;
 
 class VertexArray {
-private:
-	unsigned int mVAO;
-
 public:
 	VertexArray();
 	~VertexArray();
@@ -15,5 +12,10 @@ public:
 	void bind() const;
 	void unbind() const;
 
-	void addBuffer(const VertexBuffer& vbo, const VertexBufferLayout& layout);
+	void addBuffer(const VertexBuffer&, const VertexBufferLayout&);
+	inline unsigned int getCount() const { return mCountVerticles; }
+
+private:
+	unsigned int mVAO;
+	unsigned int mCountVerticles;
 };

@@ -24,20 +24,21 @@ void VertexArray::unbind() const
 	GLCall(glBindVertexArray(0));
 }
 
-void VertexArray::addBuffer(const VertexBuffer& vbo, const VertexBufferLayout& layout)
+void VertexArray::addBuffer(const VertexBuffer& vbo, const VertexBufferLayout& layoutVertex)
 {
 	// Bind vertex array
 	bind();
 	// Bind vertex buffer
 	vbo.bind();
-	// Set layout
-	const auto& elements = layout.getElements();
+	mCountVerticles = vbo.getCount();
+	// Set vertex layout
+	const auto& elements = layoutVertex.getElements();
 	unsigned int offset = 0;
 	for (unsigned int i = 0; i < elements.size(); ++i)
 	{
 		const auto& element = elements[i];
 		GLCall(glEnableVertexAttribArray(i));
-		GLCall(glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.getStride(), (const void*)offset));
+		GLCall(glVertexAttribPointer(i, element.count, element.type, element.normalized, layoutVertex.getStride(), (const void*)offset));
 		offset += element.count * VertexBufferElement::getSizeOfType(element.type);
 	}
 }

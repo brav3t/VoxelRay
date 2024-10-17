@@ -2,7 +2,6 @@
 #include "renderer.h"
 
 #include "gl_utils.h"
-#include "vertex_buffer.h"
 
 Renderer::Renderer(std::unique_ptr<IWindow> window)
     : mRenderWindow(std::move(window)) {
@@ -33,8 +32,29 @@ void Renderer::initRender() {
     while(!mRenderWindow->shouldClose()) {
         mRenderWindow->processInput();
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         mRenderWindow->onUpdate();
     }
+}
+
+void Renderer::clear() const
+{
+    GLCall(glClear(GL_COLOR_BUFFER_BIT));
+}
+
+void Renderer::draw(const Shader& shader, const VertexArray& vao, const IndexBuffer& ibo) const
+{
+    shader.bind();
+    vao.bind();
+    ibo.bind();
+
+    GLCall(glDrawElements(GL_TRIANGLES, ibo.getCount(), GL_UNSIGNED_INT, nullptr));
+}
+
+void Renderer::draw(const Shader& shader, const VertexArray& vao) const
+{
+    shader.bind();
+    vao.bind();
+
+    glDrawArrays(GL_TRIANGLES, 0, vao.getCount());
 }
