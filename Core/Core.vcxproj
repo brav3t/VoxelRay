@@ -30,6 +30,7 @@
     <ClCompile Include="vendor\GLAD\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\renderer\camera.h" />
     <ClInclude Include="src\renderer\gl_utils.h" />
     <ClInclude Include="src\renderer\index_buffer.h" />
     <ClInclude Include="src\renderer\ray_box_shader.h" />
