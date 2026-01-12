@@ -18,7 +18,8 @@ public:
     void setCameraPos(const glm::vec3& camPos) const;
     void setInvViewProjMatrix(const glm::mat4& invViewProj) const;
     void setResolution(const glm::vec2& scrRes) const;
-	void setVoxelCount(int count) const;
+    void setVoxelRadius(const glm::vec3& voxelRadius) const;
+    void setVoxelCount(int count) const;
 
 private:
     std::string loadTextFile(const std::string& path);

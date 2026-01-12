@@ -5,6 +5,7 @@ layout(location=0) out vec4 outColor;
 uniform vec3 uCameraPos;
 uniform mat4 uInvViewProj;
 uniform vec2 uResolution;
+uniform vec3 uVoxelRadius;
 uniform int uVoxelCount;
 
 struct Ray
@@ -25,9 +26,7 @@ struct Box // For the intersection test
 struct Voxel
 {
     vec4 center;
-    vec4 radius;
     mat4 rotation;
-
     vec4 color;
 };
 
@@ -108,8 +107,8 @@ void main()
 
         Box box;
         box.center    = voxel.center.xyz;
-        box.radius    = voxel.radius.xyz;
-        box.invRadius = safeInverse(box.radius);
+        box.radius    = uVoxelRadius;
+        box.invRadius = safeInverse(uVoxelRadius);
         box.rotation  = mat3(voxel.rotation);
 
         float distance;

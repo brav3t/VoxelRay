@@ -81,10 +81,16 @@ void RayBoxShader::setResolution(const glm::vec2& scrRes) const
     glUniform2f(loc, scrRes.x, scrRes.y);
 }
 
+void RayBoxShader::setVoxelRadius(const glm::vec3& voxelRadius) const
+{
+    GLint loc = getUniformLocation("uVoxelRadius");
+    glUniform3f(loc, voxelRadius.x, voxelRadius.y, voxelRadius.z);
+}
+
 void RayBoxShader::setVoxelCount(int count) const
 {
     GLint loc = getUniformLocation("uVoxelCount");
-	glUniform1i(loc, count);
+    glUniform1i(loc, count);
 }
 
 std::string RayBoxShader::loadTextFile(const std::string& path)

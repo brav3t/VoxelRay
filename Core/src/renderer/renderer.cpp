@@ -105,13 +105,11 @@ void Renderer::render()
 
         VoxelGPU vox1{};
         vox1.center = { 0,0,-5,0 };
-        vox1.radius = { 0.5f,0.5f,0.5f,0 };
         vox1.rotation = glm::mat4(1.0f);
         vox1.color = { 1,0,1,1 };
 
         VoxelGPU vox2{};
         vox2.center = { -2,0,-5,0 };
-        vox2.radius = { 0.5f,0.5f,0.5f,0 };
         vox2.rotation = glm::mat4(1.0f);
         vox2.color = { 0,1,0,1 };
 
@@ -121,7 +119,15 @@ void Renderer::render()
         voxelsSSBO.allocate(sizeof(VoxelGPU) * voxels.size(), voxels.data());
         voxelsSSBO.bind(0);
 
-        draw(rayBoxShader, voxels.size(), camera.pos, invViewProj, mRenderWindow->resolution);
+        glm::vec3 voxelRadius{ 0.5f, 0.5f, 0.5f };
+
+        draw(
+            rayBoxShader,
+            static_cast<int>(voxels.size()),
+            voxelRadius,
+            camera.pos,
+            invViewProj,
+            mRenderWindow->resolution);
 
         mRenderWindow->onUpdate();
     }
@@ -135,6 +141,7 @@ void Renderer::clear() const
 void Renderer::draw(
     const RayBoxShader& shader,
     const int voxelCount,
+    const glm::vec3& voxelRadius,
     const glm::vec3& camPos,
     const glm::mat4& invViewProj,
     const glm::vec2& scrRes) const
@@ -144,7 +151,8 @@ void Renderer::draw(
     shader.setCameraPos(camPos);
     shader.setInvViewProjMatrix(invViewProj);
     shader.setResolution(scrRes);
-	shader.setVoxelCount(voxelCount);
+	shader.setVoxelRadius(voxelRadius);
+    shader.setVoxelCount(voxelCount);
 
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
 }
