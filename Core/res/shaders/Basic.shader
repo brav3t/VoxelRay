@@ -8,8 +8,8 @@ out vec3 outColor;
 
 void main()
 {
-	outColor = vColor;
-	gl_Position = vec4(vPosition, 0.0, 1.0);
+    outColor = vColor;
+    gl_Position = vec4(vPosition, 0.0, 1.0);
 };
 
 #shader fragment
@@ -21,5 +21,5 @@ out Vec4 outFragColor;
 
 void main()
 {
-	outFragColor = vec4(inColor, 1.0, 1.0);
+    outFragColor = vec4(inColor, 1.0, 1.0);
 };

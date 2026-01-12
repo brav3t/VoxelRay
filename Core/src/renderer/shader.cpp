@@ -10,21 +10,24 @@
 #include <sstream>
 
 Shader::Shader(const std::string& filepath)
-	: mFilePath(filepath)
-	, mShaderID(0) {
+    : mFilePath(filepath)
+    , mShaderID(0) {
     ShaderProgramSource source = parseShader(filepath);
     mShaderID = createShader(source.VertexSource, source.FragmentSource);
 }
 
-Shader::~Shader() {
+Shader::~Shader()
+{
     GLCall(glDeleteProgram(mShaderID));
 }
 
-void Shader::bind() const {
+void Shader::bind() const
+{
     GLCall(glUseProgram(mShaderID));
 }
 
-void Shader::unbind() const {
+void Shader::unbind() const
+{
     GLCall(glUseProgram(0));
 }
 

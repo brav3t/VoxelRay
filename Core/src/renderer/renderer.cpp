@@ -19,7 +19,7 @@
 
 void Renderer::addWindow(std::unique_ptr<IWindow> window)
 {
-	mRenderWindow = std::move(window);
+    mRenderWindow = std::move(window);
 }
 
 void Renderer::render()
@@ -47,9 +47,13 @@ void Renderer::render()
 
     glm::mat4 invViewProj(1.0f);
 
+    GLCall(glViewport(0, 0, (int)mRenderWindow->resolution.x, (int)mRenderWindow->resolution.y));
+
     while(!mRenderWindow->shouldClose())
     {
         mRenderWindow->processInput();
+
+        clear();
 
         draw(voxels, cameraPosition, invViewProj, mRenderWindow->resolution);
 
