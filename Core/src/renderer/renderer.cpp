@@ -7,6 +7,8 @@
 #include "../window_handling/window_factory.h"
 #include "ray_box_shader.h"
 #include "camera.h"
+#include "ssbo.h"
+#include "voxel.h"
 
 #include <glad/glad.h>
 #include <glm/fwd.hpp>
@@ -46,9 +48,9 @@ void Renderer::render()
     GLCall(glGenVertexArrays(1, &dummyVAO));
     GLCall(glBindVertexArray(dummyVAO));
 
-    RayBoxShader voxels("res/shaders/raybox.shader");
+    RayBoxShader rayBoxShader("res/shaders/raybox.shader");
 
-    GLCall(glViewport(0, 0, (int)mRenderWindow->resolution.x, (int)mRenderWindow->resolution.y));
+    GLCall(glViewport(0, 0, static_cast<int>(mRenderWindow->resolution.x), static_cast<int>(mRenderWindow->resolution.y)));
 
     GLCall(glClearColor(0.05f, 0.05f, 0.07f, 1.0f));
 
@@ -57,7 +59,6 @@ void Renderer::render()
         auto* wnd = (GLFWwindow*)mRenderWindow->pWnd;
 
         // Mouse look with right click
-
         if (glfwGetMouseButton(wnd, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
         {
             glfwSetInputMode(wnd, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -101,7 +102,17 @@ void Renderer::render()
 
         clear();
 
-        draw(voxels, camera.pos, invViewProj, mRenderWindow->resolution);
+        VoxelGPU voxel{};
+        voxel.center = { 0,0,-5,0 };
+        voxel.radius = { 0.5f,0.5f,0.5f,0 };
+        voxel.rotation = glm::mat4(1.0f);
+        voxel.color = { 1,0,1,1 };
+
+        ShaderStorageBuffer voxels;
+        voxels.allocate(sizeof(VoxelGPU), &voxel);
+        voxels.bind(0);
+
+        draw(rayBoxShader, voxels, camera.pos, invViewProj, mRenderWindow->resolution);
 
         mRenderWindow->onUpdate();
     }
@@ -112,7 +123,12 @@ void Renderer::clear() const
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Renderer::draw(const RayBoxShader& shader, const glm::vec3& camPos, const glm::mat4& invViewProj, const glm::vec2& scrRes) const
+void Renderer::draw(
+    const RayBoxShader& shader,
+    const ShaderStorageBuffer& ssbo,
+    const glm::vec3& camPos,
+    const glm::mat4& invViewProj,
+    const glm::vec2& scrRes) const
 {
     shader.bind();
 
