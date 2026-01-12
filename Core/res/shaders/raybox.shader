@@ -97,8 +97,8 @@ void main()
 {
     Ray ray = makePrimaryRay(gl_FragCoord.xy);
 
-    float bestT = 1e30;
-    vec3 bestN = vec3(0.0);
+    float bestDist = 1e30;
+    vec3 bestNorm = vec3(0.0);
     vec4 bestVoxelColor = vec4(0.0);
 
     for (int i = 0; i < uVoxelCount; ++i)
@@ -115,19 +115,19 @@ void main()
         vec3 normal;
         bool hit = intersect(box, ray, distance, normal, /*rayCanStartInBox*/ true, /*oriented*/ true, ray.invDir /*if oriented not needed*/);
 
-        if (hit && 0.0 < distance && distance < bestT)
+        if (hit && 0.0 < distance && distance < bestDist)
         {
-            bestT = distance;
-            bestN = normal;
+            bestDist = distance;
+            bestNorm = normal;
             bestVoxelColor = voxel.color;
         }
     }
 
-    bool anyHit = (bestT < 1e29);
+    bool anyHit = (bestDist < 1e29);
     if (anyHit)
     {
         // method1: Lambert diffusion model
-        vec3 normal = normalize(bestN);
+        vec3 normal = normalize(bestNorm);
         vec3 lightDir = normalize(vec3(0.6, 0.8, 0.4));
         float NdotL = max(dot(normal, lightDir), 0.0);
 
