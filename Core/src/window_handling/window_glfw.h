@@ -1,11 +1,16 @@
 
 #include "window_factory.h"
 
-class WindowGLFW final : public IWindow {
+#include <memory>
+
+class WindowGLFW final : public IWindow
+{
 public:
     WindowGLFW(int width, int height, const char* title);
     WindowGLFW(const WindowGLFW&) = delete;
+
     virtual ~WindowGLFW();
+
     WindowGLFW operator=(const WindowGLFW&) = delete;
 
     virtual bool shouldClose() const override;

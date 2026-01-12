@@ -1,12 +1,17 @@
 
 #include "window_glfw.h"
 
-#include "../renderer/gl_utils.h"
+#include "window_factory.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <stdexcept>
+#include <memory>
 
 WindowGLFW::WindowGLFW(int width, int height, const char* title)
-    : IWindow(width, height, title) {
+    : IWindow(width, height, title)
+{
     // Set OpenGL version
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -20,44 +25,56 @@ WindowGLFW::WindowGLFW(int width, int height, const char* title)
             // height will be significantly larger than specified on retina displays.
             glViewport(0, 0, width, height);
         };
+
         glfwSetFramebufferSizeCallback((GLFWwindow*)pWnd, framebufferSizeCallback);
     }
 }
 
-WindowGLFW::~WindowGLFW() {
+WindowGLFW::~WindowGLFW()
+{
     glfwDestroyWindow((GLFWwindow*)pWnd);
 }
 
-bool WindowGLFW::shouldClose() const {
+bool WindowGLFW::shouldClose() const
+{
     return glfwWindowShouldClose((GLFWwindow*)pWnd);
 }
 
-void WindowGLFW::processInput() const {
+void WindowGLFW::processInput() const
+{
     if (glfwGetKey((GLFWwindow*)pWnd, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
         glfwSetWindowShouldClose((GLFWwindow*)pWnd, true);
+    }
 }
 
-void WindowGLFW::onUpdate() const {
+void WindowGLFW::onUpdate() const
+{
     glfwSwapBuffers((GLFWwindow*)pWnd);
 
     // poll IO events (keys pressed/released, mouse moved etc.)
     glfwPollEvents(); // It is not window based!
 }
 
-void* WindowGLFW::getProcAddress() const {
+void* WindowGLFW::getProcAddress() const
+{
     return glfwGetProcAddress;
 }
 
-WindowFactoryGLFW::WindowFactoryGLFW() {
-    if (glfwInit() == GLFW_FALSE) {
+WindowFactoryGLFW::WindowFactoryGLFW()
+{
+    if (glfwInit() == GLFW_FALSE)
+    {
         throw std::runtime_error("Could not initialize glfw!");
     }
 }
 
-WindowFactoryGLFW::~WindowFactoryGLFW() {
+WindowFactoryGLFW::~WindowFactoryGLFW()
+{
     glfwTerminate();
 }
 
-std::unique_ptr<IWindow> WindowFactoryGLFW::CreateWindow(int width, int height, const char* title) {
+std::unique_ptr<IWindow> WindowFactoryGLFW::CreateWindow(int width, int height, const char* title)
+{
     return std::make_unique<WindowGLFW>(width, height, title);
 }

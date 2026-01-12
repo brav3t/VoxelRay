@@ -4,13 +4,19 @@
 #include "vertex_array.h"
 #include "index_buffer.h"
 #include "shader.h"
+#include "ray_box_shader.h"
 
-class Renderer {
+#include <memory>
+#include <glm/fwd.hpp>
+
+class Renderer
+{
 public:
-    Renderer(std::unique_ptr<IWindow> window);
-
-    void initRender();
+    void addWindow(std::unique_ptr<IWindow> window);
+    void render();
     void clear() const;
+
+    void draw(const RayBoxShader& shader, const glm::vec3& camPos, const glm::mat4& invViewProj, const glm::vec2& scrRes) const;
     void draw(const Shader&, const VertexArray&, const IndexBuffer&) const;
     void draw(const Shader&, const VertexArray&) const;
 

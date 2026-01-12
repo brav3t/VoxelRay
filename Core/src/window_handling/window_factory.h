@@ -1,16 +1,20 @@
-
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include <memory>
+#include <string>
 
 class IWindow {
 public:
     IWindow(int width, int height, const char* title)
-        : width(width), height(height), title(title), pWnd(nullptr) {
+        : resolution{ static_cast<float>(width), static_cast<float>(height) }, title(title), pWnd(nullptr)
+    {
     }
+
     IWindow(const IWindow&) = delete;
     virtual ~IWindow() = default;
-    IWindow operator=(const IWindow&) = delete;
+    IWindow& operator=(const IWindow&) = delete;
 
     inline virtual bool isWindowCreated() const { return pWnd != nullptr; }
     virtual bool shouldClose() const = 0;
@@ -19,9 +23,8 @@ public:
     virtual void* getProcAddress() const = 0;
 
 public:
-    int width;
-    int height;
-    const char* title;
+    glm::vec2 resolution;
+    std::string title;
     void* pWnd;
 };
 

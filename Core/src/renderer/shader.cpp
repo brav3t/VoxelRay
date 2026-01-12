@@ -3,6 +3,8 @@
 
 #include "gl_utils.h"
 
+#include <glm/fwd.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -39,11 +41,6 @@ void Shader::setUniform1f(const std::string& name, float value) {
 void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
     GLint location = getUniformLocation(name);
     GLCall(glUniform4f(location, v0, v1, v2, v3));
-}
-
-void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
-    GLint location = getUniformLocation(name);
-    GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]));
 }
 
 GLint Shader::getUniformLocation(const std::string& name) const {
@@ -87,7 +84,8 @@ ShaderProgramSource Shader::parseShader(const std::string& filepath) {
     return { ss[0].str(), ss[1].str() };
 }
 
-unsigned int Shader::compileShader(unsigned int type, const std::string& source) {
+unsigned int Shader::compileShader(unsigned int type, const std::string& source)
+{
     unsigned int id = glCreateShader(type);
     const char* src = source.c_str();
     GLCall(glShaderSource(id, 1, &src, nullptr));
@@ -112,7 +110,8 @@ unsigned int Shader::compileShader(unsigned int type, const std::string& source)
     return id;
 }
 
-unsigned int Shader::createShader(const std::string& vertexShader, const std::string& fragmentShader) {
+unsigned int Shader::createShader(const std::string& vertexShader, const std::string& fragmentShader)
+{
     unsigned int program = glCreateProgram();
     unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
     unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);

@@ -1,8 +1,9 @@
-
 #include "vertex_array.h"
-
+#include "vertex_buffer.h"
 #include "vertex_buffer_layout.h"
+
 #include "gl_utils.h"
+#include <cstdint>
 
 VertexArray::VertexArray()
 {
@@ -38,7 +39,7 @@ void VertexArray::addBuffer(const VertexBuffer& vbo, const VertexBufferLayout& l
 	{
 		const auto& element = elements[i];
 		GLCall(glEnableVertexAttribArray(i));
-		GLCall(glVertexAttribPointer(i, element.count, element.type, element.normalized, layoutVertex.getStride(), (const void*)offset));
+		GLCall(glVertexAttribPointer(i, element.count, element.type, element.normalized, layoutVertex.getStride(), (const void*)(intptr_t)offset));
 		offset += element.count * VertexBufferElement::getSizeOfType(element.type);
 	}
 }
