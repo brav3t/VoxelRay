@@ -91,9 +91,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\Basic.shader">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="res\shaders\raybox.shader">
       <Filter>Resource Files</Filter>
     </None>

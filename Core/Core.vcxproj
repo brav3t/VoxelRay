@@ -20,30 +20,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\renderer\index_buffer.cpp" />
     <ClCompile Include="src\renderer\ray_box_shader.cpp" />
     <ClCompile Include="src\renderer\renderer.cpp" />
-    <ClCompile Include="src\renderer\shader.cpp" />
-    <ClCompile Include="src\renderer\vertex_array.cpp" />
-    <ClCompile Include="src\renderer\vertex_buffer.cpp" />
     <ClCompile Include="src\window_handling\window_glfw.cpp" />
     <ClCompile Include="vendor\GLAD\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\renderer\camera.h" />
     <ClInclude Include="src\renderer\gl_utils.h" />
-    <ClInclude Include="src\renderer\index_buffer.h" />
     <ClInclude Include="src\renderer\ray_box_shader.h" />
     <ClInclude Include="src\renderer\renderer.h" />
-    <ClInclude Include="src\renderer\shader.h" />
-    <ClInclude Include="src\renderer\vertex_array.h" />
-    <ClInclude Include="src\renderer\vertex_buffer.h" />
-    <ClInclude Include="src\renderer\vertex_buffer_layout.h" />
     <ClInclude Include="src\window_handling\window_factory.h" />
     <ClInclude Include="src\window_handling\window_glfw.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\raybox.shader" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
