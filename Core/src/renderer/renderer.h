@@ -1,8 +1,8 @@
+#pragma once
 
 #include "../window_handling/window_factory.h"
 
 #include "ray_box_shader.h"
-#include "ssbo.h"
 
 #include <memory>
 #include <glm/fwd.hpp>
@@ -22,6 +22,8 @@ public:
         const glm::vec3& camPos,
         const glm::mat4& invViewProj,
         const glm::vec2& scrRes) const;
+
+    void initRays() const;
 
 private:
     std::unique_ptr<IWindow> mRenderWindow;

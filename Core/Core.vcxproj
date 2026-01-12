@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\renderer\input_handler.cpp" />
     <ClCompile Include="src\renderer\ray_box_shader.cpp" />
     <ClCompile Include="src\renderer\renderer.cpp" />
     <ClCompile Include="src\renderer\ssbo.cpp" />
@@ -29,6 +30,7 @@
   <ItemGroup>
     <ClInclude Include="src\renderer\camera.h" />
     <ClInclude Include="src\renderer\gl_utils.h" />
+    <ClInclude Include="src\renderer\input_handler.h" />
     <ClInclude Include="src\renderer\ray_box_shader.h" />
     <ClInclude Include="src\renderer\renderer.h" />
     <ClInclude Include="src\renderer\ssbo.h" />

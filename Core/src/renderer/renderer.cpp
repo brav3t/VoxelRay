@@ -7,6 +7,7 @@
 #include "../window_handling/window_factory.h"
 #include "ray_box_shader.h"
 #include "camera.h"
+#include "input_handler.h"
 #include "ssbo.h"
 #include "voxel.h"
 
@@ -39,87 +40,44 @@ void Renderer::render()
         return;
     }
 
+    GLCall(glViewport(0, 0, static_cast<int>(mRenderWindow->resolution.x), static_cast<int>(mRenderWindow->resolution.y)));
+
+    GLCall(glClearColor(0.05f, 0.05f, 0.07f, 1.0f)); // Set frameBuffer clear color
+
     Camera camera;
 
-    double lastTime = glfwGetTime();
-    double lastX = 0.0, lastY = 0.0;
-    bool firstMouse = true;
+    float wndAspectRatio = mRenderWindow->resolution.x / mRenderWindow->resolution.y;
+    InputHandlerGLFW inputHandler((GLFWwindow*)mRenderWindow->pWnd, wndAspectRatio, camera);
 
-    GLuint dummyVAO = 0;
-    GLCall(glGenVertexArrays(1, &dummyVAO));
-    GLCall(glBindVertexArray(dummyVAO));
+    // Voxel data
+    glm::vec3 voxelRadius{ 0.5f, 0.5f, 0.5f };
+
+    VoxelGPU vox1{};
+    vox1.center = { 0,0,-5,0 };
+    vox1.rotation = glm::mat4(1.0f);
+    vox1.color = { 1,0,1,1 };
+
+    VoxelGPU vox2{};
+    vox2.center = { -2,0,-5,0 };
+    vox2.rotation = glm::mat4(1.0f);
+    vox2.color = { 0,1,0,1 };
+
+    std::vector<VoxelGPU> voxels = { vox1, vox2 };
+
+    ShaderStorageBuffer voxelsSSBO;
+    voxelsSSBO.allocate(sizeof(VoxelGPU) * voxels.size(), voxels.data());
+    voxelsSSBO.bind(0);
 
     RayBoxShader rayBoxShader("res/shaders/raybox.shader");
 
-    GLCall(glViewport(0, 0, static_cast<int>(mRenderWindow->resolution.x), static_cast<int>(mRenderWindow->resolution.y)));
+    initRays();
 
-    GLCall(glClearColor(0.05f, 0.05f, 0.07f, 1.0f));
-
+    // Render loop
     while(!mRenderWindow->shouldClose())
     {
-        auto* wnd = (GLFWwindow*)mRenderWindow->pWnd;
-
-        // Mouse look with right click
-        if (glfwGetMouseButton(wnd, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-        {
-            glfwSetInputMode(wnd, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-            double x, y;
-            glfwGetCursorPos(wnd, &x, &y);
-            if (firstMouse){ lastX = x; lastY = y; firstMouse = false; }
-
-            float dx = float(x - lastX);
-            float dy = float(lastY - y);
-            lastX = x; lastY = y;
-
-            const float sens = 0.08f;
-            camera.addPitchYaw(dx * sens, dy * sens);
-        }
-        else
-        {
-            glfwSetInputMode(wnd, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            firstMouse = true;
-        }
-
-        // WASD move
-        float speed = 3.0f;
-        if (glfwGetKey(wnd, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) speed = 8.0f;
-
-        // Get time delta
-        double now = glfwGetTime();
-        float dt = float(now - lastTime);
-        lastTime = now;
-
-        if (glfwGetKey(wnd, GLFW_KEY_W) == GLFW_PRESS) camera.pos += camera.forward() * speed * dt;
-        if (glfwGetKey(wnd, GLFW_KEY_S) == GLFW_PRESS) camera.pos -= camera.forward() * speed * dt;
-        if (glfwGetKey(wnd, GLFW_KEY_A) == GLFW_PRESS) camera.pos -= camera.right() * speed * dt;
-        if (glfwGetKey(wnd, GLFW_KEY_D) == GLFW_PRESS) camera.pos += camera.right() * speed * dt;
-
-        // update invViewProj
-        float aspect = mRenderWindow->resolution.x / mRenderWindow->resolution.y;
-        glm::mat4 view = camera.view();
-        glm::mat4 proj = camera.proj(aspect);
-        glm::mat4 invViewProj = glm::inverse(proj * view);
-
         clear();
 
-        VoxelGPU vox1{};
-        vox1.center = { 0,0,-5,0 };
-        vox1.rotation = glm::mat4(1.0f);
-        vox1.color = { 1,0,1,1 };
-
-        VoxelGPU vox2{};
-        vox2.center = { -2,0,-5,0 };
-        vox2.rotation = glm::mat4(1.0f);
-        vox2.color = { 0,1,0,1 };
-
-        std::vector<VoxelGPU> voxels = { vox1, vox2 };
-
-        ShaderStorageBuffer voxelsSSBO;
-        voxelsSSBO.allocate(sizeof(VoxelGPU) * voxels.size(), voxels.data());
-        voxelsSSBO.bind(0);
-
-        glm::vec3 voxelRadius{ 0.5f, 0.5f, 0.5f };
+        glm::mat4 invViewProj = inputHandler.calcInvViewProj();
 
         draw(
             rayBoxShader,
@@ -151,8 +109,17 @@ void Renderer::draw(
     shader.setCameraPos(camPos);
     shader.setInvViewProjMatrix(invViewProj);
     shader.setResolution(scrRes);
-	shader.setVoxelRadius(voxelRadius);
+    shader.setVoxelRadius(voxelRadius);
     shader.setVoxelCount(voxelCount);
 
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
+}
+
+// Initializes a dummy VAO required to issue draw calls and
+// execute per-pixel ray generation in the fragment shader.
+void Renderer::initRays() const
+{
+    GLuint dummyVAO = 0;
+    GLCall(glGenVertexArrays(1, &dummyVAO));
+    GLCall(glBindVertexArray(dummyVAO));
 }
