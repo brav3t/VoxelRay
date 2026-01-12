@@ -22,6 +22,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer\ray_box_shader.cpp" />
     <ClCompile Include="src\renderer\renderer.cpp" />
+    <ClCompile Include="src\renderer\ssbo.cpp" />
     <ClCompile Include="src\window_handling\window_glfw.cpp" />
     <ClCompile Include="vendor\GLAD\src\glad.c" />
   </ItemGroup>
@@ -30,6 +31,7 @@
     <ClInclude Include="src\renderer\gl_utils.h" />
     <ClInclude Include="src\renderer\ray_box_shader.h" />
     <ClInclude Include="src\renderer\renderer.h" />
+    <ClInclude Include="src\renderer\ssbo.h" />
     <ClInclude Include="src\window_handling\window_factory.h" />
     <ClInclude Include="src\window_handling\window_glfw.h" />
   </ItemGroup>
