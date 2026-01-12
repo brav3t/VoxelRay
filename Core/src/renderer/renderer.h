@@ -3,9 +3,12 @@
 #include "../window_handling/window_factory.h"
 
 #include "ray_box_shader.h"
+#include "voxel.h"
 
 #include <memory>
 #include <glm/fwd.hpp>
+#include "ssbo.h"
+#include <vector>
 
 class Renderer
 {
@@ -24,6 +27,13 @@ public:
         const glm::vec2& scrRes) const;
 
     void initRays() const;
+
+    void rotateVoxel(
+        int voxelIdx,
+        std::vector<VoxelGPU>& voxels,
+        ShaderStorageBuffer& ssbo,
+        float angleDeg,
+        const glm::vec3& axis);
 
 private:
     std::unique_ptr<IWindow> mRenderWindow;

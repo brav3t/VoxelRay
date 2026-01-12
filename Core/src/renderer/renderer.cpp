@@ -72,12 +72,29 @@ void Renderer::render()
 
     initRays();
 
+    // Get time delta
+    float deltaTime = 0.0f;
+    float lastTime = (float)glfwGetTime();
+
     // Render loop
     while(!mRenderWindow->shouldClose())
     {
         clear();
 
-        glm::mat4 invViewProj = inputHandler.calcInvViewProj();
+        float currentTime = (float)glfwGetTime();
+        deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+
+        glm::mat4 invViewProj = inputHandler.calcInvViewProj(deltaTime);
+
+        static float angle = 0.0f;
+        angle += 15.0f * deltaTime;
+        rotateVoxel(
+            0,
+            voxels,
+            voxelsSSBO,
+            angle,
+            glm::vec3(0, 1, 0));
 
         draw(
             rayBoxShader,
@@ -122,4 +139,34 @@ void Renderer::initRays() const
     GLuint dummyVAO = 0;
     GLCall(glGenVertexArrays(1, &dummyVAO));
     GLCall(glBindVertexArray(dummyVAO));
+}
+
+void Renderer::rotateVoxel(
+    int voxelIdx,
+    std::vector<VoxelGPU>& voxels,
+    ShaderStorageBuffer& ssbo,
+    float angleDeg,
+    const glm::vec3& axis)
+{
+    if (voxelIdx < 0 || voxelIdx >= (int)voxels.size())
+        return;
+
+    float angleRad = glm::radians(angleDeg);
+
+    // box -> world rotation
+    glm::mat4 boxToWorld = glm::rotate(glm::mat4(1.0f), angleRad, glm::normalize(axis));
+
+    // world -> box (if rot-only inverse = transpose)
+    glm::mat4 worldToBox = glm::transpose(boxToWorld);
+
+    // CPU voxel data update
+    voxels[voxelIdx].rotation = worldToBox;
+
+    // GPU voxel data update
+    size_t offset = voxelIdx * sizeof(VoxelGPU);
+    
+    ssbo.update(
+        static_cast<GLintptr>(offset),
+        sizeof(VoxelGPU),
+        &voxels[voxelIdx]);
 }

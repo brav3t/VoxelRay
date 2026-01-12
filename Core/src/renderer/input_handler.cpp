@@ -14,7 +14,7 @@ InputHandlerGLFW::InputHandlerGLFW(GLFWwindow* pWnd, float wndAspectRatio, Camer
 {
 }
 
-glm::mat4 InputHandlerGLFW::calcInvViewProj()
+glm::mat4 InputHandlerGLFW::calcInvViewProj(float deltaTime)
 {
     // Mouse look with right click
     if (glfwGetMouseButton(mWnd, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
@@ -42,15 +42,10 @@ glm::mat4 InputHandlerGLFW::calcInvViewProj()
     float speed = 3.0f;
     if (glfwGetKey(mWnd, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) speed = 8.0f;
 
-    // Get time delta
-    double now = glfwGetTime();
-    float dt = float(now - mLastTime);
-    mLastTime = now;
-
-    if (glfwGetKey(mWnd, GLFW_KEY_W) == GLFW_PRESS) mCamera.pos += mCamera.forward() * speed * dt;
-    if (glfwGetKey(mWnd, GLFW_KEY_S) == GLFW_PRESS) mCamera.pos -= mCamera.forward() * speed * dt;
-    if (glfwGetKey(mWnd, GLFW_KEY_A) == GLFW_PRESS) mCamera.pos -= mCamera.right() * speed * dt;
-    if (glfwGetKey(mWnd, GLFW_KEY_D) == GLFW_PRESS) mCamera.pos += mCamera.right() * speed * dt;
+    if (glfwGetKey(mWnd, GLFW_KEY_W) == GLFW_PRESS) mCamera.pos += mCamera.forward() * speed * deltaTime;
+    if (glfwGetKey(mWnd, GLFW_KEY_S) == GLFW_PRESS) mCamera.pos -= mCamera.forward() * speed * deltaTime;
+    if (glfwGetKey(mWnd, GLFW_KEY_A) == GLFW_PRESS) mCamera.pos -= mCamera.right() * speed * deltaTime;
+    if (glfwGetKey(mWnd, GLFW_KEY_D) == GLFW_PRESS) mCamera.pos += mCamera.right() * speed * deltaTime;
 
     // update invViewProj
     glm::mat4 view = mCamera.view();

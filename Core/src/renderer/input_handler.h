@@ -10,7 +10,7 @@ class InputHandlerGLFW
 public:
     InputHandlerGLFW(GLFWwindow* pWnd, float wndAspectRatio, Camera& camera);
 
-    glm::mat4 calcInvViewProj();
+    glm::mat4 calcInvViewProj(float deltaTime);
 
 private:
     GLFWwindow* mWnd;
