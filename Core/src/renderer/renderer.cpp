@@ -66,7 +66,6 @@ void Renderer::clear() const
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-
 void Renderer::draw(const RayBoxShader& shader, const glm::vec3& camPos, const glm::mat4& invViewProj, const glm::vec2& scrRes) const
 {
     shader.bind();
@@ -76,21 +75,4 @@ void Renderer::draw(const RayBoxShader& shader, const glm::vec3& camPos, const g
     shader.setResolution(scrRes);
 
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
-}
-
-void Renderer::draw(const Shader& shader, const VertexArray& vao, const IndexBuffer& ibo) const
-{
-    shader.bind();
-    vao.bind();
-    ibo.bind();
-
-    GLCall(glDrawElements(GL_TRIANGLES, ibo.getCount(), GL_UNSIGNED_INT, nullptr));
-}
-
-void Renderer::draw(const Shader& shader, const VertexArray& vao) const
-{
-    shader.bind();
-    vao.bind();
-
-    glDrawArrays(GL_TRIANGLES, 0, vao.getCount());
 }
