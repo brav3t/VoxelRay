@@ -81,6 +81,12 @@ void RayBoxShader::setResolution(const glm::vec2& scrRes) const
     glUniform2f(loc, scrRes.x, scrRes.y);
 }
 
+void RayBoxShader::setVoxelCount(int count) const
+{
+    GLint loc = getUniformLocation("uVoxelCount");
+	glUniform1i(loc, count);
+}
+
 std::string RayBoxShader::loadTextFile(const std::string& path)
 {
     std::ifstream fileStream(path);

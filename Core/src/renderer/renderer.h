@@ -15,7 +15,7 @@ public:
     void render();
 
     void clear() const;
-    void draw(const RayBoxShader&, const glm::vec3& camPos, const glm::mat4& invViewProj, const glm::vec2& scrRes) const;
+    void draw(const RayBoxShader&, const int voxelCount, const glm::vec3& camPos, const glm::mat4& invViewProj, const glm::vec2& scrRes) const;
 
 private:
     std::unique_ptr<IWindow> mRenderWindow;

@@ -1,15 +1,11 @@
 #version 450
 
-#define Point3  vec3;
-#define Vector3 vec3;
-#define Vector3 vec3;
-#define Matrix3 mat4;
-
 layout(location=0) out vec4 outColor;
 
 uniform vec3 uCameraPos;
 uniform mat4 uInvViewProj;
 uniform vec2 uResolution;
+uniform int uVoxelCount;
 
 struct Ray
 {
@@ -102,34 +98,53 @@ void main()
 {
     Ray ray = makePrimaryRay(gl_FragCoord.xy);
 
-    Voxel voxel = voxels[0];
+    float bestT = 1e30;
+    vec3 bestN = vec3(0.0);
+    vec4 bestVoxelColor = vec4(0.0);
 
-    Box box;
-    box.center     = voxel.center.xyz;
-    box.radius     = voxel.radius.xyz;
-    box.invRadius  = safeInverse(box.radius);
-    box.rotation = mat3(voxel.rotation);
+    for (int i = 0; i < uVoxelCount; ++i)
+    {
+        Voxel voxel = voxels[i];
 
-    float distance;
-    vec3 normal;
-    bool hit = intersect(box, ray, distance, normal, /*rayCanStartInBox*/ true, /*oriented*/ true, ray.invDir /*if oriented not needed*/);
+        Box box;
+        box.center    = voxel.center.xyz;
+        box.radius    = voxel.radius.xyz;
+        box.invRadius = safeInverse(box.radius);
+        box.rotation  = mat3(voxel.rotation);
 
-    //outColor = hit ? vec4(normal * 0.5 + 0.5, 1.0) : vec4(0,0,0,1);
+        float distance;
+        vec3 normal;
+        bool hit = intersect(box, ray, distance, normal, /*rayCanStartInBox*/ true, /*oriented*/ true, ray.invDir /*if oriented not needed*/);
 
-    // Lambert diffusion model
-    normal = normalize(normal);
-    vec3 lightDir = normalize(vec3(0.6, 0.8, 0.4));
-    float NdotL = max(dot(normal, lightDir), 0.0);
+        if (hit && 0.0 < distance && distance < bestT)
+        {
+            bestT = distance;
+            bestN = normal;
+            bestVoxelColor = voxel.color;
+        }
+    }
 
-    vec3 baseColor = voxel.color.rgb;
-    vec3 color = baseColor * (0.2 + 0.8 * NdotL);
+    bool anyHit = (bestT < 1e29);
+    if (anyHit)
+    {
+        // method1: Lambert diffusion model
+        vec3 normal = normalize(bestN);
+        vec3 lightDir = normalize(vec3(0.6, 0.8, 0.4));
+        float NdotL = max(dot(normal, lightDir), 0.0);
 
-    outColor = vec4(color, voxel.color.a);
+        vec3 baseColor = bestVoxelColor.rgb;
+        vec3 color = baseColor * (0.2 + 0.8 * NdotL);
 
-    // Combine normal and base color for visualization
-    //vec3 normalColor = normal * 0.5 + 0.5;
-    //vec3 baseColor   = voxel.color.rgb;
+        outColor = vec4(color, bestVoxelColor.a);
 
-    //vec3 color = mix(baseColor, normalColor, 0.5);
-    //outColor = vec4(color, 1.0);
+        // method2: Combine normal and base color
+        //vec3 normalColor = normal * 0.5 + 0.5;
+        //vec3 baseColor = voxel.color.rgb;
+        //vec3 color = mix(baseColor, normalColor, 0.5);
+        //outColor = vec4(color, 1.0);
+    }
+    else
+    {
+        outColor = vec4(0,0,0,1);
+    }
 }
