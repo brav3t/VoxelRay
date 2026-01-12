@@ -32,6 +32,7 @@
     <ClInclude Include="src\renderer\ray_box_shader.h" />
     <ClInclude Include="src\renderer\renderer.h" />
     <ClInclude Include="src\renderer\ssbo.h" />
+    <ClInclude Include="src\renderer\voxel.h" />
     <ClInclude Include="src\window_handling\window_factory.h" />
     <ClInclude Include="src\window_handling\window_glfw.h" />
   </ItemGroup>
