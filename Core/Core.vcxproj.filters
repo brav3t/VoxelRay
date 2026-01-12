@@ -51,6 +51,9 @@
     <ClCompile Include="src\renderer\vertex_array.cpp">
       <Filter>Source Files\renderer_gl</Filter>
     </ClCompile>
+    <ClCompile Include="src\renderer\ray_box_shader.cpp">
+      <Filter>Source Files\renderer_gl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\window_handling\window_factory.h">
@@ -80,9 +83,15 @@
     <ClInclude Include="src\renderer\vertex_buffer_layout.h">
       <Filter>Header Files\renderer_gl</Filter>
     </ClInclude>
+    <ClInclude Include="src\renderer\ray_box_shader.h">
+      <Filter>Header Files\renderer_gl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\shaders\raybox.shader">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
