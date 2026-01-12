@@ -17,6 +17,7 @@
 #include <iostream>
 #include <utility>
 #include <memory>
+#include <vector>
 
 void Renderer::addWindow(std::unique_ptr<IWindow> window)
 {
@@ -102,17 +103,25 @@ void Renderer::render()
 
         clear();
 
-        VoxelGPU voxel{};
-        voxel.center = { 0,0,-5,0 };
-        voxel.radius = { 0.5f,0.5f,0.5f,0 };
-        voxel.rotation = glm::mat4(1.0f);
-        voxel.color = { 1,0,1,1 };
+        VoxelGPU vox1{};
+        vox1.center = { 0,0,-5,0 };
+        vox1.radius = { 0.5f,0.5f,0.5f,0 };
+        vox1.rotation = glm::mat4(1.0f);
+        vox1.color = { 1,0,1,1 };
 
-        ShaderStorageBuffer voxels;
-        voxels.allocate(sizeof(VoxelGPU), &voxel);
-        voxels.bind(0);
+        VoxelGPU vox2{};
+        vox2.center = { 0,0,-6,0 };
+        vox2.radius = { 0.5f,0.5f,0.5f,0 };
+        vox2.rotation = glm::mat4(1.0f);
+        vox2.color = { 1,0,1,0 };
 
-        draw(rayBoxShader, voxels, camera.pos, invViewProj, mRenderWindow->resolution);
+		std::vector<VoxelGPU> voxels = { vox1, vox2 };
+
+        ShaderStorageBuffer voxelsSSBO;
+        voxelsSSBO.allocate(voxels.size() * sizeof(VoxelGPU), voxels.data());
+        voxelsSSBO.bind(0);
+
+        draw(rayBoxShader, camera.pos, invViewProj, mRenderWindow->resolution);
 
         mRenderWindow->onUpdate();
     }
@@ -125,7 +134,6 @@ void Renderer::clear() const
 
 void Renderer::draw(
     const RayBoxShader& shader,
-    const ShaderStorageBuffer& ssbo,
     const glm::vec3& camPos,
     const glm::mat4& invViewProj,
     const glm::vec2& scrRes) const
