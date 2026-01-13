@@ -21,6 +21,7 @@ namespace gl_utils {
     }
 }
 
+// GLCall is from The Cherno OpenGL series
 #define ASSERT(x) if (!(x)) __debugbreak(); // __debugbreak only for MSVSC
 #define GLCall(x) gl_utils::GLClearError();\
     x;\
