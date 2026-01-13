@@ -7,9 +7,9 @@
 struct Camera
 {
     glm::vec3 pos{0.0f, 0.0f, 3.0f};
-    float yaw   = -90.0f; // forward -Z
-    float pitch = 0.0f;
-    float fov   = 60.0f;
+	float yaw = -90.0f; // y axle left, right (forward -Z)
+    float pitch = 0.0f; // x axle up, down
+    float fov = 60.0f; // field of view in degrees
 
     glm::vec3 forward() const
     {
